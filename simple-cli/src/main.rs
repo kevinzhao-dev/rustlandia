@@ -1,14 +1,29 @@
 use clap::{Parser, Subcommand};
 
+#[derive(Parser)]
+#[command(name = "hello cli")]
+#[command(about = "A simple CLI with subcommands", long_about = None)]
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
+}
+
+#[derive(Subcommand)]
+enum Commands {
+    Greet { name: String },
+
+    Bye { name: String },
+}
+
 fn main() {
-    let args: Vec<String> = std::env::args().collect();
+    let cli = Cli::parse();
 
-    if args.len() < 2 {
-        eprintln!("Usage: simple-cli <name>");
-
-        std::process::exit(1);
+    match &cli.command {
+        Commands::Greet { name } => {
+            println!("Hello {}!", name);
+        }
+        Commands::Bye { name } => {
+            println!("Bye {}!", name);
+        }
     }
-
-    let name: &String = &args[1];
-    println!("Hello {}!", { name });
 }
